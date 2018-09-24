@@ -1,0 +1,52 @@
+﻿@page
+@model Zirk.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Datum</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.datatype)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.datatype)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.value)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.value)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.prevValue)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.prevValue)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.editdate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.editdate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.edits)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.edits)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Datum.id" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-page="./Index">Back to List</a>
+    </form>
+</div>

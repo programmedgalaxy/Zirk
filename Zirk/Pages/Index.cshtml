@@ -1,0 +1,194 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Database";
+}
+
+<div class="page-header">
+    <h1 class="header-text">Zirk Web UI</h1>
+        <h4 class="header-text-2">This is the web interface for the Zirk data webserver application.</h4>
+        <p class="header-text-2">It allows for addition and deletion of data from an SQL database, with the changes being reflected in realtime.</p>
+</div>
+<div>
+    <h2>Current Data Set</h2>
+    <div class="well table-area">
+        <table class="table table-hover data-table-style">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data Type</th>
+                    <th>Data</th>
+                    <th>Added/Modified</th>
+                    <th width=52px> </th>
+                    <th width=52px> </th>
+                </tr>
+            </thead>
+            <tbody id="updatable_table">
+                @foreach (var item in Model.Datum)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(Model => item.id)</td>
+                        <td>@Html.DisplayFor(Model => item.datatype)</td>
+                        <td>@Html.DisplayFor(Model => item.value)</td>
+                        <td>
+                            @Html.DisplayFor(Model => item.editdate) @if (item.edits > 0)
+                        {<span class="badge">@item.edits edits</span>}
+                        </td>
+                        <td><form method="post"><input name="id" value="@item.id" hidden><input name="op" value="edit" hidden><button id="edit-btn" name="edit-btn" type="submit" class="btn" asp-action="EditData" asp-route-id="@item.id"><span class="glyphicon glyphicon glyphicon-edit"></span></button></form></td>
+                        <td><form method="post"><input name="id" value="@item.id" hidden><input name="op" value="delete" hidden><button id="del-btn" name="del-btn" type="submit" class="btn btn-danger" asp-action="DeleteData" asp-route-id="@item.id"><span class="glyphicon glyphicon glyphicon-trash"></span></button></form></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div>
+    <a id="entry_zone"></a>
+    <h2>Submit/Modify Data</h2>
+    <form method="post" class="table-horizontal">
+        <div class="form-group">
+            <div class="input-group col-sm-3">
+                <span class="input-group-addon">ID</span>
+                <input type="text" class="form-control has-default" name="new_ID" id="new_ID" min="1" value="New Data">
+            </div>
+        </div>
+        @*Deprecated feature, replaced with type inference system*@
+        @*<div class="form-group">
+            <div class="input-group col-sm-3">
+                <span class="input-group-addon">Data Type</span>
+                <select class="form-control" name="data_type" id="data_type">
+                    <option>Integer</option>
+                    <option>Float</option>
+                    <option>String</option>
+                </select>
+            </div>
+        </div>*@
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">Data</span>
+                <input class="form-control input-lg has-default" name="data_contents" id="data_contents" value="Input your data here!" required>
+            </div>
+        </div>
+        <button id="submit-button" type="submit" class="btn btn-default">Submit</button>
+    </form>
+    <p id="validation_error" style="font-style: italic; color: #a01010"></p>
+</div>
+<p id="DEBUG_TEXT">@Model.debugText</p>
+
+<script>
+    window.setInterval(refreshData, 1000);
+
+    $("#edit-btn", true).click(function () {
+        $.post('/?handler=EditData', id);
+        //$.ajax({
+        //    type: "GET",
+        //    url: '/?handler=EditData',
+        //    data: {
+        //        id: data_id
+        //    }
+        //})
+    });
+    $("#del-btn").click(function () {
+        $.ajax({
+            type: "GET",
+            url: '/?handler=DeleteData',
+            data: {
+                id: data_id
+            }
+        })
+    });
+
+    function modifyData(data_id) {
+        var id = document.getElementById("new_ID");
+        var datatype = document.getElementById("data_type");
+        var contents = document.getElementById("data_contents");
+        var errortext = document.getElementById("validation_error");
+
+        if (datatype.value == "Integer") {
+            try {
+                var intVal = parseInt(contents.value);
+            }
+            catch (error) {
+                errortext.value = "Input not valid, check your data/data type."
+                return;
+            }
+        }
+        if (datatype.value == "Float") {
+            if (isNaN(contents.value)) {
+                errortext.value = "Input not valid, check your data/data type."
+                return;
+            }
+        }
+
+        //if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+        //    xmlhttp = new XMLHttpRequest();
+        //}
+        //else { // code for IE6, IE5
+        //    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        //}
+
+        //xmlhttp.onreadystatechange = function () {
+        //    if (this.readyState == 4 && this.status == 200) {
+        //        //xmlValues = xmlhttp.responseXML;
+        //    }
+        //}
+
+        if (id.value == "New Data") {
+            //xmlhttp.open("GET", "op=add&datatype=" + datatype + "&value=" + contents, true);
+            //xmlhttp.send();
+            $("#submit-button").click(function () {
+                $.ajax({
+                    url: "?data_type=" + datatype + "&data_contents=" + value,
+                    datatype: "text",
+                    type: "POST",
+                    success: function (data) {
+                        $('#DEBUG_TEXT').html("All OK");
+                    },
+                    error: function () {
+                        $("#DEBUG_TEXT").html("ERROR");
+                    }
+                });
+            });
+        }
+
+
+        else {
+            //xmlhttp.open("GET", "op=edit&id=" + id + "datatype=" + datatype + "&value=" + contents, true);
+            //xmlhttp.send();
+            $("#submit-button").click(function () {
+                $.ajax({
+                    url: "/Edit",
+                    datatype: "text",
+                    type: "POST",
+                    success: function (data) {
+                        $('#DEBUG_TEXT').html("All OK");
+                    },
+                    error: function () {
+                        $("#DEBUG_TEXT").html("ERROR");
+                    }
+                });
+            });
+        }
+
+
+
+    }
+
+    function refreshData() {
+        //if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+        //    xmlhttp = new XMLHttpRequest();
+        //}
+        //else { // code for IE6, IE5
+        //    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        //}
+
+        //xmlhttp.onreadystatechange = function () {
+        //    if (this.readyState == 4 && this.status == 200) {
+        //        //xmlValues = xmlhttp.responseXML;
+        //    }
+        //}
+
+        //xmlhttp.open("GET", "Index", true);
+        //xmlhttp.send();
+    }
+</script>

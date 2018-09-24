@@ -1,0 +1,49 @@
+﻿@page
+@model Zirk.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Datum</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.datatype)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.datatype)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.value)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.value)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.prevValue)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.prevValue)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.editdate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.editdate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Datum.edits)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Datum.edits)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Datum.id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

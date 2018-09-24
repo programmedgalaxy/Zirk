@@ -1,0 +1,60 @@
+﻿@page
+@model Zirk.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Datum[0].datatype)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Datum[0].value)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Datum[0].prevValue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Datum[0].editdate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Datum[0].edits)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Datum) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.datatype)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.prevValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.editdate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.edits)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

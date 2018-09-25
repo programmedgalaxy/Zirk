@@ -19,16 +19,17 @@ namespace Zirk.Pages
         private readonly Zirk.Models.ZirkContext _context;
 
         public IndexModel(Zirk.Models.ZirkContext context)
-        {
+        {   // on init, get the context to the DB
             _context = context;
         }
 
+        // Local list of DB elements, to be populated by code
         public IList<Models.Datum> Datum { get; set; }
 
         public async Task OnGetAsync()
         {
+            // populate the local data structure from the DB on page load
             Datum = await _context.Datum.ToListAsync();
-            //debugText = new Random().Next().ToString();
         }
 
         // Set the data input fields to the values from the selected item
@@ -51,7 +52,10 @@ namespace Zirk.Pages
         // Handles actions performed by form submissions
         public async Task OnPostAsync()
         {
-            var op = Request.Form["op"];
+            Datum = _context.Datum.ToList();
+            StringValues op;
+            try { op = Request.Form["op"]; }
+            catch { }
 
             if (op.Equals("edit"))
             {   // calls the EditData task on the selected ID
@@ -79,7 +83,7 @@ namespace Zirk.Pages
 
                 if (id.Equals("New Data")) // Value when nothing has been written in the ID field
                 {   // create a new Datum and write the values to the database
-                    int newID = -1;
+                    int newID = 0;
                     foreach (var i in _context.Datum)
                     {   // Determine the ID to assign to the new item
                         if (i.id > newID) newID = i.id;
@@ -108,6 +112,7 @@ namespace Zirk.Pages
                             id = _context.Datum.Find(idInt).id,
                             datatype = datatype[0],
                             value = value[0],
+                            prevValue = _context.Datum.Find(idInt).value,   // track the value prior to the edit
                             editdate = DateTime.Now,
                             edits = _context.Datum.Find(idInt).edits + 1    // add an edit to the counter
                         };
